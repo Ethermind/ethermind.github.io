@@ -144,7 +144,7 @@
             this.merged = false;
         };
 
-        Cell.prototype.amIAWinner = function() {
+        Cell.prototype.amIAWinner = function () {
             return this.value == 2048;
         }
     </script>
@@ -162,6 +162,7 @@
             this.cells = this.empty();
             this.setAvailableCell(new Cell());
             this.setAvailableCell(new Cell());
+            this.memento = new Memento();
         };
 
         // Build a grid of the specified size
@@ -205,6 +206,7 @@
         };
 
         Board.prototype.up = function () {
+            this.memento.hydrate(this.cells);
             var moved = false;
             var self = game.board;
 
@@ -251,6 +253,7 @@
         };
 
         Board.prototype.down = function () {
+            this.memento.hydrate(this.cells);
             var moved = false;
             var self = game.board;
 
@@ -297,6 +300,7 @@
         };
 
         Board.prototype.right = function () {
+            this.memento.hydrate(this.cells);
             var moved = false;
             var self = game.board;
 
@@ -342,8 +346,8 @@
             }
         };
 
-        // Si no hay algo en el medio no se tocan!
         Board.prototype.left = function () {
+            this.memento.hydrate(this.cells);
             var moved = false;
             var self = game.board;
 
@@ -436,8 +440,40 @@
                 }
             }
         };
-    </script>
 
+        Board.prototype.undo = function () {
+            var oldcells = this.memento.dehydrate();
+
+            if (oldcells == null)
+                return;
+
+            this.cells = this.empty();
+
+            for (var x = 0; x < this.size; x++) {
+                for (var y = 0; y < this.size; y++) {
+                    if (oldcells[x][y] != null) {
+                        this.cells[x][y] = new Cell();
+                        this.cells[x][y].value = oldcells[x][y].value;
+                    }
+                }
+            }
+        };
+    </script>
+    <script type="text/javascript">
+        var Memento = function () {
+            this.memento = null;
+        };
+
+        Memento.prototype.hydrate = function (obj) {
+            this.memento = JSON.stringify(obj);
+        };
+
+        Memento.prototype.dehydrate = function () {
+            var value = JSON.parse(this.memento);
+            this.memento = null;
+            return value;
+        };
+    </script>
     <script type="text/javascript">
         var KeyboardManager = function (board) {
             document.getKeyAction = this.getKeyAction;
@@ -480,6 +516,7 @@
     </script>
 
     <canvas id="canvas"></canvas>
+    <input type="button" name="undo" id="undo" value="Undo" />
     <table style="font-family: courier; border: 1px; border-color: red; border-style:double; ">
         <tr>
             <td id="cell00" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align:center;">x</td>
@@ -509,6 +546,15 @@
     <script type="text/javascript">
         $(document).ready(function () {
             game = new IngloriousGame2048();
+            $("#undo").on("click", function (e) {
+                game.board.undo();
+            });
+
+            //$("#undo").click(function (e) {
+            //    alert("pepe");
+            //    game.undo();
+            //});
+
             game.start();
         });
     </script>
