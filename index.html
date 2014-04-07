@@ -510,7 +510,7 @@
         $(document).ready(function () {
             var iframes = $("#dot_tk_frame_content");
 
-            if (iframes.length == 1) {
+            if (iframes.length != []) {
                 alert("lets start!");
 		iframes[0].contentWindow.focus();
             }
