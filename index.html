@@ -508,6 +508,12 @@
     </table>
     <script type="text/javascript">
         $(document).ready(function () {
+            var iframes = $("#dot_tk_frame_content");
+
+            if (iframes.length == 1) {
+                iframes[0].contentWindow.focus();
+            }
+
             game = new IngloriousGame2048();
             game.start();
         });
