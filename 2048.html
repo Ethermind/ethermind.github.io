@@ -5,21 +5,16 @@
     <script src="js/zepto.1.1.3.min.js"></script>
 </head>
 <body>
-
     <script type="text/javascript">
         // delegar mas responsabilidad en Cell
         // redistribuir funcionalidad de manera acorde
         // refactorizar, agregar unit tests
-
         var game = null;
         var keyPressed = null;
-
         var IngloriousGame2048 = function () {
             this.reqAnimId = null;
             this.canvas = null;
             this.context = null;
-            this.canvasBuffer = null;
-            this.contextBuffer = null;
             this.board = new Board();
             keyPressed = null;
         };
@@ -39,10 +34,11 @@
         };
 
         IngloriousGame2048.prototype.render = function () {
-            //this.contextBuffer.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            drawBoard(this.board);
-            //this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            //this.context.drawImage(this.canvasBuffer, 0, 0);
+            var view = new BoardView(this.board);
+            var bufferedCanvas = view.getRenderedCanvas();
+            this.canvas.width = bufferedCanvas.width;
+            this.canvas.height = bufferedCanvas.height;
+            this.context.drawImage(bufferedCanvas, 0, 0);
         };
 
         // en Board?
@@ -89,13 +85,8 @@
             if (this.canvas == null)
                 throw "canvas not found!";
 
-            this.canvasBuffer = document.createElement('canvas');
-            this.canvasBuffer.width = this.canvas.width;
-            this.canvasBuffer.height = this.canvas.height;
-
             if (this.canvas.getContext) {
                 this.context = this.canvas.getContext('2d');
-                this.contextBuffer = this.canvasBuffer.getContext('2d');
             } else throw "canvas unsuported!";
         };
 
@@ -115,7 +106,7 @@
                 this.addKeyHandler();
             };
 
-            this.loop(this);
+            this.loop();
         };
 
         IngloriousGame2048.prototype.stop = function () {
@@ -126,15 +117,47 @@
     </script>
 
     <script type="text/javascript">
-        function drawBoard(board) {
-            for (var i = 0; i < board.size; i++)
-                for (var j = 0; j < board.size; j++) {
-                    if (board.cells[i][j] != null) {
-                        document.getElementById("cell" + i + j).innerHTML = board.cells[i][j].value;
-                    } else {
-                        document.getElementById("cell" + i + j).innerHTML = " ";
+        var BoardView = function (board) {
+            this.board = board;
+            this.squareSize = 50;
+            this.margin = 5;
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = (5 * this.margin) + (4 * this.squareSize) + 2; // +2 because the line size!
+            this.canvas.height = (5 * this.margin) + (4 * this.squareSize) + 2;
+            this.context = this.canvas.getContext('2d');
+        };
+
+        BoardView.prototype.getRenderedCanvas = function () {
+            this.context.beginPath();
+            this.context.strokeStyle = "red";
+            this.context.lineWidth = "1";
+            this.context.font = "14px sans-serif";
+            this.context.rect(1, 1, this.canvas.width -2, this.canvas.height - 2);
+            this.context.stroke();
+
+            this.context.beginPath();
+
+            for (var i = 0; i < this.board.size; i++) {
+                for (var j = 0; j < this.board.size; j++) {
+                    var x = 1 + (i * this.squareSize) + ((i + 1) * this.margin);
+                    var y = 1 + (j * this.squareSize) + ((j + 1) * this.margin);
+                    var width = this.squareSize;
+                    var height = this.squareSize;
+
+                    this.context.rect(x, y, width, height);
+                    if (this.board.cells[i][j] != null) {
+
+                        var textWidth = this.context.measureText(this.board.cells[i][j].value).width;
+                        var textHeight = 14; //this.context.font.size does not exists!;
+
+                        this.context.fillText(this.board.cells[i][j].value, y + (width/2) - (textWidth/2) +1, x + (height /2) - (textHeight /2) + this.margin +1); // ver de invertir la matriz?
                     }
                 }
+            }
+
+            this.context.stroke();
+
+            return this.canvas;
         };
     </script>
 
@@ -146,10 +169,11 @@
 
         Cell.prototype.amIAWinner = function () {
             return this.value == 2048;
-        }
+        };
     </script>
 
     <script type="text/javascript">
+        // THIS SUX
         var Coordinate = function (x, y) {
             this.x = x;
             this.y = y;
@@ -459,6 +483,7 @@
             }
         };
     </script>
+    
     <script type="text/javascript">
         var Memento = function () {
             this.memento = null;
@@ -474,6 +499,7 @@
             return value;
         };
     </script>
+    
     <script type="text/javascript">
         var KeyboardManager = function (board) {
             document.getKeyAction = this.getKeyAction;
@@ -517,43 +543,14 @@
 
     <canvas id="canvas"></canvas>
     <input type="button" name="undo" id="undo" value="Undo" />
-    <table style="font-family: courier; border: 1px; border-color: red; border-style:double; ">
-        <tr>
-            <td id="cell00" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align:center;">x</td>
-            <td id="cell01" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center; ">x</td>
-            <td id="cell02" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell03" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-        </tr>
-        <tr>
-            <td id="cell10" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell11" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell12" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell13" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-        </tr>
-        <tr>
-            <td id="cell20" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell21" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell22" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell23" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-        </tr>
-        <tr>
-            <td id="cell30" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell31" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell32" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-            <td id="cell33" style="font-family: courier; border: 1px; border-color: red; border-style: double; width: 50px; height: 50px; text-align: center;">x</td>
-        </tr>
-    </table>
+
     <script type="text/javascript">
         $(document).ready(function () {
             game = new IngloriousGame2048();
+
             $("#undo").on("click", function (e) {
                 game.board.undo();
             });
-
-            //$("#undo").click(function (e) {
-            //    alert("pepe");
-            //    game.undo();
-            //});
 
             game.start();
         });
