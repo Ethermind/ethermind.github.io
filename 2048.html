@@ -112,6 +112,22 @@
                 e.preventDefault();
             });
 
+
+
+            $(this.canvas).on("swipeUp", function (e) {
+                keyPressed = 38; // Up
+            });
+            $(this.canvas).on("swipeDown", function (e) {
+                keyPressed = 40; // Down
+            });
+            $(this.canvas).on("swipeLeft", function (e) {
+                keyPressed = 37; // Left
+            });
+            $(this.canvas).on("swipeRight", function (e) {
+                keyPressed = 39; // Right
+            });
+
+
             if (this.canvas.getContext) {
                 this.context = this.canvas.getContext('2d');
             } else throw "canvas unsuported!";
