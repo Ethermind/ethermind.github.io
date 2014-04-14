@@ -108,6 +108,9 @@
 
             this.canvas.width = view.getCanvasWidth();
             this.canvas.height = view.getCanvasHeight();
+            $(this.canvas).on('touchstart', function (e) {
+                e.preventDefault();
+            });
 
             if (this.canvas.getContext) {
                 this.context = this.canvas.getContext('2d');
