@@ -143,15 +143,15 @@
     <script type="text/javascript">
         var BoardView = function (board) {
             this.board = board;
-            this.squareSize = 50;
-            this.margin = 5;
+            this.squareSize = 160;
+            this.margin = 0;
             this.canvas = document.createElement('canvas');
             this.canvas.width = this.getCanvasWidth();
             this.canvas.height = this.getCanvasHeight();
             this.context = this.canvas.getContext('2d');
         };
 
-        BoardView.prototype.getCanvasWidth = function() {
+        BoardView.prototype.getCanvasWidth = function () {
             return (5 * this.margin) + (4 * this.squareSize) + 2; // +2 because the line size!
         };
 
@@ -160,14 +160,43 @@
         };
 
         BoardView.prototype.getRenderedCanvas = function () {
-            this.context.beginPath();
-            this.context.strokeStyle = "red";
-            this.context.lineWidth = "1";
-            this.context.font = "14px sans-serif";
-            this.context.rect(1, 1, this.canvas.width -2, this.canvas.height - 2);
-            this.context.stroke();
+            //this.context.beginPath();
+            //this.context.strokeStyle = "red";
+            //this.context.lineWidth = "1";
+            //this.context.font = "14px sans-serif";
+            //this.context.rect(1, 1, this.canvas.width -2, this.canvas.height - 2);
+            //this.context.stroke();
 
-            this.context.beginPath();
+            //this.context.beginPath();
+
+            //for (var i = 0; i < this.board.size; i++) {
+            //    for (var j = 0; j < this.board.size; j++) {
+            //        var x = 1 + (i * this.squareSize) + ((i + 1) * this.margin);
+            //        var y = 1 + (j * this.squareSize) + ((j + 1) * this.margin);
+            //        var width = this.squareSize;
+            //        var height = this.squareSize;
+
+            //        this.context.rect(x, y, width, height);
+            //        if (this.board.cells[i][j] != null) {
+
+            //            var textWidth = this.context.measureText(this.board.cells[i][j].value).width;
+            //            var textHeight = 14; //this.context.font.size does not exists!;
+
+            //            this.context.fillText(this.board.cells[i][j].value, y + (width/2) - (textWidth/2) +1, x + (height /2) - (textHeight /2) + this.margin +1); // ver de invertir la matriz?
+            //        }
+            //    }
+            //}
+
+            //this.context.stroke();
+
+
+            //            this.drawImage(this.context, 0, 0, 160, 160, image2048Position);
+
+
+
+            var img = new Image();
+
+            img.src = "/img/sprite.gif";
 
             for (var i = 0; i < this.board.size; i++) {
                 for (var j = 0; j < this.board.size; j++) {
@@ -176,21 +205,90 @@
                     var width = this.squareSize;
                     var height = this.squareSize;
 
-                    this.context.rect(x, y, width, height);
-                    if (this.board.cells[i][j] != null) {
+                    if (this.board.cells[j][i] == null) {
+                        this.drawImage(this.context, x, y, width, height, image0Position);
+                    }
+                    else {
+                        if (this.board.cells[j][i].value == 2) {
+                            this.drawImage(this.context, x, y, width, height, image2Position);
+                        }
 
-                        var textWidth = this.context.measureText(this.board.cells[i][j].value).width;
-                        var textHeight = 14; //this.context.font.size does not exists!;
+                        if (this.board.cells[j][i].value == 4) {
+                            this.drawImage(this.context, x, y, width, height, image4Position);
+                        }
 
-                        this.context.fillText(this.board.cells[i][j].value, y + (width/2) - (textWidth/2) +1, x + (height /2) - (textHeight /2) + this.margin +1); // ver de invertir la matriz?
+                        if (this.board.cells[j][i].value == 8) {
+                            this.drawImage(this.context, x, y, width, height, image8Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 16) {
+                            this.drawImage(this.context, x, y, width, height, image16Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 32) {
+                            this.drawImage(this.context, x, y, width, height, image32Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 64) {
+                            this.drawImage(this.context, x, y, width, height, image64Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 128) {
+                            this.drawImage(this.context, x, y, width, height, image128Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 256) {
+                            this.drawImage(this.context, x, y, width, height, image256Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 512) {
+                            this.drawImage(this.context, x, y, width, height, image512Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 1024) {
+                            this.drawImage(this.context, x, y, width, height, image1024Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 2048) {
+                            this.drawImage(this.context, x, y, width, height, image2048Position);
+                        }
+
+                        if (this.board.cells[j][i].value == 4096) {
+                            this.drawImage(this.context, x, y, width, height, image4096Position);
+                        }
                     }
                 }
             }
 
-            this.context.stroke();
+
+
+
 
             return this.canvas;
         };
+
+        var image0Position = { dx: 0, dy: 0, dw: 160, dh: 160 };
+        var image2Position = { dx: 161, dy: 0, dw: 160, dh: 160 };
+        var image4Position = { dx: 321, dy: 0, dw: 160, dh: 160 };
+        var image8Position = { dx: 481, dy: 0, dw: 160, dh: 160 };
+        var image16Position = { dx: 0, dy: 161, dw: 160, dh: 160 };
+        var image32Position = { dx: 161, dy: 161, dw: 160, dh: 160 };
+        var image64Position = { dx: 321, dy: 161, dw: 160, dh: 160 };
+        var image128Position = { dx: 481, dy: 161, dw: 160, dh: 160 };
+        var image256Position = { dx: 0, dy: 321, dw: 160, dh: 160 };
+        var image512Position = { dx: 161, dy: 321, dw: 160, dh: 160 };
+        var image1024Position = { dx: 321, dy: 321, dw: 160, dh: 160 };
+        var image2048Position = { dx: 481, dy: 321, dw: 160, dh: 160 };
+        var image4096Position = { dx: 0, dy: 481, dw: 160, dh: 160 };
+
+        BoardView.prototype.drawImage = function (context, x1, y1, x2, y2, value) {
+            var img = new Image();
+
+            img.src = "/img/sprite.gif";
+            context.drawImage(img, value.dx, value.dy, value.dw, value.dh, x1, y1, x2, y2);
+        };
+
+
     </script>
 
     <script type="text/javascript">
@@ -515,7 +613,7 @@
             }
         };
     </script>
-    
+
     <script type="text/javascript">
         var Memento = function () {
             this.memento = null;
@@ -531,7 +629,7 @@
             return value;
         };
     </script>
-    
+
     <script type="text/javascript">
         var KeyboardManager = function (board) {
             document.getKeyAction = this.getKeyAction;
@@ -573,7 +671,7 @@
         };
     </script>
 
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="1000" height="1000"></canvas>
     <input type="button" name="undo" id="undo" value="Undo" />
 
     <script type="text/javascript">
