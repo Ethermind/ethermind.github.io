@@ -160,44 +160,6 @@
         };
 
         BoardView.prototype.getRenderedCanvas = function () {
-            //this.context.beginPath();
-            //this.context.strokeStyle = "red";
-            //this.context.lineWidth = "1";
-            //this.context.font = "14px sans-serif";
-            //this.context.rect(1, 1, this.canvas.width -2, this.canvas.height - 2);
-            //this.context.stroke();
-
-            //this.context.beginPath();
-
-            //for (var i = 0; i < this.board.size; i++) {
-            //    for (var j = 0; j < this.board.size; j++) {
-            //        var x = 1 + (i * this.squareSize) + ((i + 1) * this.margin);
-            //        var y = 1 + (j * this.squareSize) + ((j + 1) * this.margin);
-            //        var width = this.squareSize;
-            //        var height = this.squareSize;
-
-            //        this.context.rect(x, y, width, height);
-            //        if (this.board.cells[i][j] != null) {
-
-            //            var textWidth = this.context.measureText(this.board.cells[i][j].value).width;
-            //            var textHeight = 14; //this.context.font.size does not exists!;
-
-            //            this.context.fillText(this.board.cells[i][j].value, y + (width/2) - (textWidth/2) +1, x + (height /2) - (textHeight /2) + this.margin +1); // ver de invertir la matriz?
-            //        }
-            //    }
-            //}
-
-            //this.context.stroke();
-
-
-            //            this.drawImage(this.context, 0, 0, 160, 160, image2048Position);
-
-
-
-            var img = new Image();
-
-            img.src = "/img/sprite.png";
-
             for (var i = 0; i < this.board.size; i++) {
                 for (var j = 0; j < this.board.size; j++) {
                     var x = 1 + (i * this.squareSize) + ((i + 1) * this.margin);
@@ -207,8 +169,7 @@
 
                     if (this.board.cells[j][i] == null) {
                         this.drawImage(this.context, x, y, width, height, image0Position);
-                    }
-                    else {
+                    } else {
                         if (this.board.cells[j][i].value == 2) {
                             this.drawImage(this.context, x, y, width, height, image2Position);
                         }
@@ -260,10 +221,6 @@
                 }
             }
 
-
-
-
-
             return this.canvas;
         };
 
@@ -284,8 +241,20 @@
         BoardView.prototype.drawImage = function (context, x1, y1, x2, y2, value) {
             var img = new Image();
 
-            img.src = "/img/sprite.gif";
-            context.drawImage(img, value.dx, value.dy, value.dw, value.dh, x1, y1, x2, y2);
+            img.src = "/img/sprite.png";
+            img.dx = value.dx;
+            img.dy = value.dy;
+            img.dw = value.dw;
+            img.dh = value.dh;
+            img.x1 = x1;
+            img.y1 = y1;
+            img.x2 = x2;
+            img.y2 = y2;
+
+            img.onload = function () {
+                context = document.getElementById('canvas').getContext('2d');
+                context.drawImage(img, img.dx, img.dy, img.dw, img.dh, img.x1, img.y1, img.x2, img.y2);
+            };
         };
 
 
