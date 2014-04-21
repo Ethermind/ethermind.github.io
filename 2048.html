@@ -36,7 +36,7 @@
         // refactorizar, agregar unit tests
         // = Creacion de nueva celda al azar, reemplazar por algoritmo de fuerza bruta (fijandose que haya al menos un lugar vacio)
         // = Crear una matriz especializada para representacion en canvas!!!
-
+        // Ver que este funcionando el renderizado del ultimo cuadro antes del gameover
         var game = null;
         var keyPressed = null;
         var sound = new Sound(); // Audio object's array (caching)
@@ -149,6 +149,7 @@
             game.update();
             game.render();
             if (game.isGameOver()) {
+                game.render(); // TEST IT!
                 game.stop();
             } else {
                 game.reqAnimId = window.requestAnimationFrame(game.loop);
