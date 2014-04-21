@@ -5,14 +5,33 @@
     <script src="js/zepto.1.1.3.min.js"></script>
 </head>
 <body>
+    
+    
+    <script type="text/javascript">
+        var Sound = function () {
+            this.audioCache = [];
+        };
+
+        Sound.prototype.play = function (soundFileUrl) {
+            if (this.audioCache[soundFileUrl] == null) {
+                this.audioCache[soundFileUrl] = new Audio(soundFileUrl);
+            }
+
+            this.audioCache[soundFileUrl].play();
+        };
+    </script>
+
     <script type="text/javascript">
         // delegar mas responsabilidad en Cell
         // redistribuir funcionalidad de manera acorde
         // refactorizar, agregar unit tests
         // = Creacion de nueva celda al azar, reemplazar por algoritmo de fuerza bruta (fijandose que haya al menos un lugar vacio)
         // = Crear una matriz especializada para representacion en canvas!!!
+
         var game = null;
         var keyPressed = null;
+        var sound = new Sound(); // Audio object's array (caching)
+
         var IngloriousGame2048 = function () {
             this.reqAnimId = null;
             this.canvas = null;
@@ -570,7 +589,13 @@
         };
 
         KeyboardManager.prototype.excecuteAction = function (keyCode) {
+
+            sound.play("http://www.freesfx.co.uk/rx2/mp3s/7/8708_1354102220.mp3");
+
             var action = this.getKeyAction(keyCode);
+
+            //var sound = new Sound();
+            //sound.play("snd/metal.mp3");
 
             if (action != null) {
                 eval("document.board." + action + "()");
