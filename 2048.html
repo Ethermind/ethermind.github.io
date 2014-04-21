@@ -227,7 +227,7 @@
             img.x2 = x2;
             img.y2 = y2;
             //img.onload = this.onImageLoad;
-            img.src = "img/sprite.png";
+            img.src = "img/sprite.webp";
             //img.onload();
             //this.onImageLoad();
             context.drawImage(img, img.dx, img.dy, img.dw, img.dh, img.x1, img.y1, img.x2, img.y2);
@@ -354,7 +354,7 @@
             });
 
             if (moved) {
-                this.setAvailableCell(new Cell());
+                this.movedAction();
             }
         };
 
@@ -401,7 +401,7 @@
             });
 
             if (moved) {
-                this.setAvailableCell(new Cell());
+                this.movedAction();
             }
         };
 
@@ -448,7 +448,7 @@
             });
 
             if (moved) {
-                this.setAvailableCell(new Cell());
+                this.movedAction();
             }
         };
 
@@ -495,8 +495,13 @@
             });
 
             if (moved) {
-                this.setAvailableCell(new Cell());
+                this.movedAction();
             }
+        };
+
+        Board.prototype.movedAction = function() {
+            sound.play("snd/chuick.mp3");
+            this.setAvailableCell(new Cell());
         };
 
         Board.prototype.fullLoop = function (callback) {
@@ -589,14 +594,8 @@
         };
 
         KeyboardManager.prototype.excecuteAction = function (keyCode) {
-
-            sound.play("http://www.freesfx.co.uk/rx2/mp3s/7/8708_1354102220.mp3");
-
+            //sound.play("http://www.freesfx.co.uk/rx2/mp3s/7/8708_1354102220.mp3");
             var action = this.getKeyAction(keyCode);
-
-            //var sound = new Sound();
-            //sound.play("snd/metal.mp3");
-
             if (action != null) {
                 eval("document.board." + action + "()");
             }
