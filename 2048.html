@@ -209,10 +209,12 @@
             img.y2 = y2;
             img.onload = this.onImageLoad;
             img.src = "/img/sprite.png";
+            img.onload();
+            //this.onImageLoad();
             //context.drawImage(img, img.dx, img.dy, img.dw, img.dh, img.x1, img.y1, img.x2, img.y2);
-            
+
             //img.src = "/img/sprite.png";
-            
+
         };
 
         BoardView.prototype.onImageLoad = function () {
