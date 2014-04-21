@@ -12,9 +12,18 @@
             this.audioCache = [];
         };
 
-        Sound.prototype.play = function (soundFileUrl) {
+        Sound.prototype.play = function (soundFileUrl, loop, volume) {
             if (this.audioCache[soundFileUrl] == null) {
                 this.audioCache[soundFileUrl] = new Audio(soundFileUrl);
+                this.audioCache[soundFileUrl].load();
+            }
+
+            if (loop != null) {
+                this.audioCache[soundFileUrl].loop = loop;
+            }
+
+            if (volume != null) {
+                this.audioCache[soundFileUrl].volume = volume;
             }
 
             this.audioCache[soundFileUrl].play();
@@ -500,7 +509,7 @@
         };
 
         Board.prototype.movedAction = function() {
-            sound.play("snd/chuick.mp3");
+            sound.play("snd/chuick.mp3", false, 1);
             this.setAvailableCell(new Cell());
         };
 
@@ -639,6 +648,7 @@
                 game.board.undo();
             });
 
+            sound.play("snd/background.min.mp3", true, 0.3);
             game.start();
         });
     </script>
