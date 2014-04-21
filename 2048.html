@@ -3,6 +3,7 @@
 <head>
     <title>2048 - the game</title>
     <script src="js/zepto.1.1.3.min.js"></script>
+    <script src="js/soundjs-0.5.2.min.js"></script>
 </head>
 <body>
     <script type="text/javascript">
@@ -93,18 +94,21 @@
             this.canvas.height = view.getCanvasHeight();
 
             $(this.canvas).on('touchstart', function (e) {
-                e.preventDefault();
+                e.preventDefault(); // avoid touch in canvas
             });
 
             $(this.canvas).on("swipeUp", function (e) {
                 keyPressed = 38; // Up
             });
+
             $(this.canvas).on("swipeDown", function (e) {
                 keyPressed = 40; // Down
             });
+
             $(this.canvas).on("swipeLeft", function (e) {
                 keyPressed = 37; // Left
             });
+
             $(this.canvas).on("swipeRight", function (e) {
                 keyPressed = 39; // Right
             });
@@ -143,8 +147,7 @@
     <script type="text/javascript">
         var BoardView = function (board) {
             this.board = board;
-            this.squareSize = 160;
-            this.margin = 0;
+            this.squareSize = (Math.min(window.innerWidth, window.innerHeight) / 4) - 20;  //160;
             this.canvas = document.createElement('canvas');
             this.canvas.width = this.getCanvasWidth();
             this.canvas.height = this.getCanvasHeight();
@@ -152,96 +155,51 @@
         };
 
         BoardView.prototype.getCanvasWidth = function () {
-            return (5 * this.margin) + (4 * this.squareSize) + 2; // +2 because the line size!
+            return (4 * this.squareSize);
         };
 
         BoardView.prototype.getCanvasHeight = function () {
-            return this.getCanvasWidth();
+            return (4 * this.squareSize);
         };
 
         BoardView.prototype.getRenderedCanvas = function () {
+            var spritePosition = {};
+
+            spritePosition[null] = { dx: 0, dy: 0, dw: 160, dh: 160 };
+            spritePosition[2] = { dx: 161, dy: 0, dw: 160, dh: 160 };
+            spritePosition[4] = { dx: 321, dy: 0, dw: 160, dh: 160 };
+            spritePosition[8] = { dx: 481, dy: 0, dw: 160, dh: 160 };
+            spritePosition[16] = { dx: 0, dy: 161, dw: 160, dh: 160 };
+            spritePosition[32] = { dx: 161, dy: 161, dw: 160, dh: 160 };
+            spritePosition[64] = { dx: 321, dy: 161, dw: 160, dh: 160 };
+            spritePosition[128] = { dx: 481, dy: 161, dw: 160, dh: 160 };
+            spritePosition[256] = { dx: 0, dy: 321, dw: 160, dh: 160 };
+            spritePosition[512] = { dx: 161, dy: 321, dw: 160, dh: 160 };
+            spritePosition[1024] = { dx: 321, dy: 321, dw: 160, dh: 160 };
+            spritePosition[2048] = { dx: 481, dy: 321, dw: 160, dh: 160 };
+            spritePosition[4096] = { dx: 0, dy: 481, dw: 160, dh: 160 };
+
             for (var i = 0; i < this.board.size; i++) {
                 for (var j = 0; j < this.board.size; j++) {
-                    var x = 1 + (i * this.squareSize) + ((i + 1) * this.margin);
-                    var y = 1 + (j * this.squareSize) + ((j + 1) * this.margin);
+                    var x = (i * this.squareSize);
+                    var y = (j * this.squareSize);
                     var width = this.squareSize;
                     var height = this.squareSize;
 
-                    if (this.board.cells[j][i] == null) {
-                        this.drawImage(this.context, x, y, width, height, image0Position);
-                    } else {
-                        if (this.board.cells[j][i].value == 2) {
-                            this.drawImage(this.context, x, y, width, height, image2Position);
-                        }
+                    this.drawImage(this.context, x, y, width, height, spritePosition[null]);
 
-                        if (this.board.cells[j][i].value == 4) {
-                            this.drawImage(this.context, x, y, width, height, image4Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 8) {
-                            this.drawImage(this.context, x, y, width, height, image8Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 16) {
-                            this.drawImage(this.context, x, y, width, height, image16Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 32) {
-                            this.drawImage(this.context, x, y, width, height, image32Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 64) {
-                            this.drawImage(this.context, x, y, width, height, image64Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 128) {
-                            this.drawImage(this.context, x, y, width, height, image128Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 256) {
-                            this.drawImage(this.context, x, y, width, height, image256Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 512) {
-                            this.drawImage(this.context, x, y, width, height, image512Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 1024) {
-                            this.drawImage(this.context, x, y, width, height, image1024Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 2048) {
-                            this.drawImage(this.context, x, y, width, height, image2048Position);
-                        }
-
-                        if (this.board.cells[j][i].value == 4096) {
-                            this.drawImage(this.context, x, y, width, height, image4096Position);
-                        }
-                    }
+                    if (this.board.cells[j][i] != null) {
+                        this.drawImage(this.context, x, y, width, height, spritePosition[this.board.cells[j][i].value]);
+                    } 
                 }
             }
 
             return this.canvas;
         };
 
-        var image0Position = { dx: 0, dy: 0, dw: 160, dh: 160 };
-        var image2Position = { dx: 161, dy: 0, dw: 160, dh: 160 };
-        var image4Position = { dx: 321, dy: 0, dw: 160, dh: 160 };
-        var image8Position = { dx: 481, dy: 0, dw: 160, dh: 160 };
-        var image16Position = { dx: 0, dy: 161, dw: 160, dh: 160 };
-        var image32Position = { dx: 161, dy: 161, dw: 160, dh: 160 };
-        var image64Position = { dx: 321, dy: 161, dw: 160, dh: 160 };
-        var image128Position = { dx: 481, dy: 161, dw: 160, dh: 160 };
-        var image256Position = { dx: 0, dy: 321, dw: 160, dh: 160 };
-        var image512Position = { dx: 161, dy: 321, dw: 160, dh: 160 };
-        var image1024Position = { dx: 321, dy: 321, dw: 160, dh: 160 };
-        var image2048Position = { dx: 481, dy: 321, dw: 160, dh: 160 };
-        var image4096Position = { dx: 0, dy: 481, dw: 160, dh: 160 };
-
         BoardView.prototype.drawImage = function (context, x1, y1, x2, y2, value) {
             var img = new Image();
 
-            img.src = "/img/sprite.png";
             img.dx = value.dx;
             img.dy = value.dy;
             img.dw = value.dw;
@@ -250,14 +208,15 @@
             img.y1 = y1;
             img.x2 = x2;
             img.y2 = y2;
-
-            //img.onload = function () {
-              //  context = document.getElementById('canvas').getContext('2d');
-                context.drawImage(img, img.dx, img.dy, img.dw, img.dh, img.x1, img.y1, img.x2, img.y2);
-            //};
+            img.onload = this.onImageLoad;
+            img.src = "/img/sprite.png";
         };
 
-
+        BoardView.prototype.onImageLoad = function () {
+            var img = this;
+            var context = document.getElementById('canvas').getContext('2d');
+            context.drawImage(img, img.dx, img.dy, img.dw, img.dh, img.x1, img.y1, img.x2, img.y2);
+        }
     </script>
 
     <script type="text/javascript">
@@ -348,6 +307,13 @@
                     if (self.cells[x - 1][y].value == cell.value) {
                         self.cells[x - 1][y].value = cell.value * 2;
                         self.cells[x - 1][y].merged = true;
+
+                        //createjs.Sound.addEventListener("fileload", handleLoadComplete);
+                        //createjs.Sound.registerSound({ src: "path/to/sound.mp3|path/to/sound.ogg", id: "sound" });
+                        //function handleLoadComplete(event) {
+                        //    createjs.Sound.play("sound");
+                        //}
+
                         self.cells[x][y] = null;
                         moved = true;
                     }
