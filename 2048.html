@@ -3,7 +3,6 @@
 <head>
     <title>2048 - the game</title>
     <script src="js/zepto.1.1.3.min.js"></script>
-    <script src="js/soundjs-0.5.2.min.js"></script>
 </head>
 <body>
     <script type="text/javascript">
@@ -208,8 +207,10 @@
             img.y1 = y1;
             img.x2 = x2;
             img.y2 = y2;
-            img.onload = this.onImageLoad;
             img.src = "/img/sprite.png";
+            context.drawImage(img, img.dx, img.dy, img.dw, img.dh, img.x1, img.y1, img.x2, img.y2);
+            //img.onload = this.onImageLoad;
+            //img.src = "/img/sprite.png";
         };
 
         BoardView.prototype.onImageLoad = function () {
@@ -307,13 +308,6 @@
                     if (self.cells[x - 1][y].value == cell.value) {
                         self.cells[x - 1][y].value = cell.value * 2;
                         self.cells[x - 1][y].merged = true;
-
-                        //createjs.Sound.addEventListener("fileload", handleLoadComplete);
-                        //createjs.Sound.registerSound({ src: "path/to/sound.mp3|path/to/sound.ogg", id: "sound" });
-                        //function handleLoadComplete(event) {
-                        //    createjs.Sound.play("sound");
-                        //}
-
                         self.cells[x][y] = null;
                         moved = true;
                     }
