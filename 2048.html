@@ -149,7 +149,6 @@
             game.update();
             game.render();
             if (game.isGameOver()) {
-                game.render(); // TEST IT!
                 game.stop();
             } else {
                 game.reqAnimId = window.requestAnimationFrame(game.loop);
@@ -638,7 +637,8 @@
         };
     </script>
 
-    <canvas id="canvas" width="1000" height="1000"></canvas>
+    <canvas id="canvas"></canvas>
+    <input type="button" name="start" id="start" value="Start" />
     <input type="button" name="undo" id="undo" value="Undo" />
 
     <script type="text/javascript">
@@ -649,8 +649,10 @@
                 game.board.undo();
             });
 
-            sound.play("snd/background.min.mp3", true, 0.3);
-            game.start();
+            $("#start").on("click", function (e) {
+                sound.play("snd/background.min.mp3", true, 0.3);
+                game.start();
+            });
         });
     </script>
 </body>
